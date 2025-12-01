@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-header">
+    <h1><i class="fas fa-calendar-alt"></i> Agendar Nova Consulta</h1>
+</div>
+
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <h2>Detalhes do Agendamento</h2>
+    <form method="POST" action="{{ url_for('agendar_consulta') }}">
+        <div class="form-group">
+            <label for="paciente_id">Paciente</label>
+            <select id="paciente_id" name="paciente_id" required>
+                <option value="">Selecione o Paciente</option>
+                {% for paciente in pacientes %}
+                <option value="{{ paciente.id }}">{{ paciente.nome }} (CPF: {{ paciente.cpf }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label for="data">Data da Consulta</label>
+                <input type="date" id="data" name="data" required>
+            </div>
+            <div class="form-group">
+                <label for="hora">Hora da Consulta</label>
+                <input type="time" id="hora" name="hora" required>
+                <p id="horario_status" style="margin-top: 5px; font-size: 0.9em;"></p>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="tipo_consulta">Tipo de Consulta</label>
+            <input type="text" id="tipo_consulta" name="tipo_consulta" placeholder="Ex: Triagem Inicial, Rotina, Retorno" required>
+        </div>
+        
+        <div style="text-align: right; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary" id="btn-agendar">
+                <i class="fas fa-calendar-check"></i> Confirmar Agendamento
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dataInput = document.getElementById('data');
+        const horaInput = document.getElementById('hora');
+        const statusElement = document.getElementById('horario_status');
+        const btnAgendar = document.getElementById('btn-agendar');
+        
+        btnAgendar.disabled = true;
+        btnAgendar.classList.add('btn-disabled'); 
+        
+        function verificarDisponibilidade() {
+            const data = dataInput.value;
+            const hora = horaInput.value;
+
+            if (!data || !hora) {
+                statusElement.textContent = "Preencha a data e hora.";
+                statusElement.style.color = '#000';
+                btnAgendar.disabled = true;
+                return;
+            }
+            
+            fetch('{{ url_for("verificar_horario") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: data, hora: hora })
+            })
+            .then(response => response.json())
+            .then(data => {
+                statusElement.textContent = data.mensagem;
+                if (data.disponivel) {
+                    statusElement.style.color = '#28a745';
+                    btnAgendar.disabled = false;
+                    btnAgendar.classList.remove('btn-disabled');
+                } else {
+                    statusElement.style.color = '#dc3545';
+                    btnAgendar.disabled = true;
+                    btnAgendar.classList.add('btn-disabled');
+                }
+            })
+            .catch(error => {
+                console.error('Erro na verificação de horário:', error);
+                statusElement.textContent = "Erro ao verificar disponibilidade.";
+                statusElement.style.color = '#ffc107';
+                btnAgendar.disabled = true;
+            });
+        }
+        
+        dataInput.addEventListener('change', verificarDisponibilidade);
+        horaInput.addEventListener('change', verificarDisponibilidade);
+    });
+</script>
+
+<style>
+    .btn-disabled {
+        background-color: #6c757d !important;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}

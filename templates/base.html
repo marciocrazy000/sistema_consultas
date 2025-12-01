@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Consultas | {{ titulo|default('Dashboard') }}</title>
+
+    {# IMPORTAÇÃO DO FONT AWESOME PARA ÍCONES #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    {# IMPORTAÇÃO DO ARQUIVO CSS EXTERNO (style.css) com parâmetro para FORÇAR RECARGA #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ datetime.now().timestamp() }}">
+</head>
+<body>
+
+{# ------------------------------------------------------------------------------------------------ #}
+{# SEÇÃO DE MENSAGENS FLASH (ALERTAS FLUTUANTES) - FORA DO FLUXO DE CONTEÚDO #}
+{# Centralizado na parte inferior, some após 2 segundos (com a ajuda do JS abaixo). #}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-float" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{# ------------------------------------------------------------------------------------------------ #}
+
+
+{% if autenticado() %}
+    <header>
+        {# NOVO: Título "Sistemas de Consultas" à esquerda #}
+        <div class="header-left-title">
+            <strong>Sistema de Atendimento ao Idoso</strong>
+        </div>
+
+        {# CONTAINER PARA A LOGO CENTRALIZADA #}
+        <div class="header-center-logo">
+            <img src="{{ url_for('static', filename='img/marcio_s.png') }}" alt="Logo MÁRCIO'S" class="header-logo-image">
+        </div>
+
+        {# Informações do Usuário e Botão Sair - no canto direito #}
+        <div class="user-info">
+            {# 1. MUDANÇA APLICADA: Deixa SOMENTE o nome da pessoa, removendo o conteúdo em parênteses. #}
+            <span>Olá, {{ session.nome_usuario|default('Usuário') }}</span>
+
+            {# 2. MUDANÇA APLICADA: Mantemos o href e a classe. A sublinhagem será removida no CSS. #}
+            <a href="{{ url_for('logout') }}" class="btn-sair">Sair <i class="fas fa-sign-out-alt"></i></a>
+        </div>
+    </header>
+
+    <div class="container-app">
+        <div class="sidebar">
+            {# ITENS DO MENU LATERAL - AGORA COM VERIFICAÇÃO DE CARGO #}
+
+            {# Dashboard: ADMIN, MÉDICO #}
+            {% if menu_visivel(['MEDICO']) %}
+                <a href="{{ url_for('dashboard') }}" class="{% if request.path == url_for('dashboard') %}active{% endif %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            {% endif %}
+
+            {# Cadastrar Paciente: APENAS ADMIN #}
+            {% if menu_visivel([]) %}
+                <a href="{{ url_for('cadastro_paciente') }}" class="{% if 'paciente/cadastrar' in request.path %}active{% endif %}"><i class="fas fa-user-plus"></i> Cadastrar Paciente</a>
+            {% endif %}
+
+            {# Agendar Consulta: ADMIN, MÉDICO, PACIENTE #}
+            {% if menu_visivel(['MEDICO', 'PACIENTE']) %}
+                <a href="{{ url_for('agendar_consulta') }}" class="{% if 'consulta/agendar' in request.path %}active{% endif %}"><i class="fas fa-calendar-alt"></i> Agendar Consulta</a>
+            {% endif %}
+
+            {# Gerenciar Agendamentos: ADMIN, MÉDICO #}
+            {% if menu_visivel(['MEDICO']) %}
+                <a href="{{ url_for('listar_agendamentos') }}" class="{% if 'agendamentos/futuros' in request.path %}active{% endif %}"><i class="fas fa-edit"></i> Gerenciar Agendamentos</a>
+            {% endif %}
+
+            {# Registrar Atendimento: ADMIN, MÉDICO #}
+            {% if menu_visivel(['MEDICO']) %}
+                <a href="{{ url_for('registrar_atendimento') }}" class="{% if 'atendimento/registrar' in request.path %}active{% endif %}"><i class="fas fa-file-medical-alt"></i> Registrar Atendimento</a>
+            {% endif %}
+
+            {# Histórico por Paciente: ADMIN, MÉDICO #}
+            {% if menu_visivel(['MEDICO']) %}
+                <a href="{{ url_for('historico_paciente') }}" class="{% if 'historico/paciente' in request.path %}active{% endif %}"><i class="fas fa-history"></i> Histórico por Paciente</a>
+            {% endif %}
+
+            {# Relatórios: ADMIN, MÉDICO #}
+            {% if menu_visivel(['MEDICO']) %}
+                <a href="{{ url_for('relatorio_periodo') }}" class="{% if 'relatorio/periodo' in request.path %}active{% endif %}"><i class="fas fa-chart-line"></i> Relatórios</a>
+            {% endif %}
+
+        </div>
+
+        <div class="content-wrapper">
+            <div class="content">
+                {# O CONTEÚDO PRINCIPAL VEM ABAIXO #}
+{% endif %}
+
+{# 2. DEFINIÇÃO ÚNICA E OBRIGATÓRIA DO BLOCO CONTENT #}
+{% block content %}{% endblock %}
+
+{% if autenticado() %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{# ------------------------------------------------------------------------------------------------ #}
+{# CÓDIGO JAVASCRIPT: POP-UP, MÁSCARA DE CPF E MÁSCARA DE TELEFONE (INALTERADO) #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // =========================================================
+        // 1. Lógica para Pop-up Flutuante (sumir em 2 segundos)
+        // =========================================================
+        function manageFloatingAlerts() {
+            var alerts = document.querySelectorAll('.alert-float');
+
+            alerts.forEach(function(alert) {
+                var displayTime = 1500; // 1.5 segundos visível
+                var animationTime = 500; // 0.5 segundos de transição (do CSS)
+
+                // Faz o alerta aparecer suavemente
+                setTimeout(function() {
+                    alert.classList.add('show');
+                }, 100);
+
+                // Inicia o temporizador para começar a sumir
+                setTimeout(function() {
+                    alert.classList.remove('show');
+
+                    // Remove o elemento do DOM após a animação de saída
+                    setTimeout(function() {
+                        alert.remove();
+                    }, animationTime);
+
+                }, displayTime);
+            });
+        }
+
+        manageFloatingAlerts();
+
+        // =========================================================
+        // 2. Lógica para Máscara de CPF
+        // =========================================================
+
+        function maskCPF(value) {
+            value = value.replace(/\D/g, "");
+            value = value.substring(0, 11);
+
+            if (value.length > 3) {
+                value = value.replace(/^(\d{3})(\d)/, "$1.$2");
+            }
+            if (value.length > 7) {
+                value = value.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
+            }
+            if (value.length > 9) {
+                value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})$/, "$1.$2.$3-$4");
+            }
+            return value;
+        }
+
+        const cpfInput = document.getElementById('cpf');
+
+        if (cpfInput) {
+            cpfInput.addEventListener('input', function(e) {
+                e.target.value = maskCPF(e.target.value);
+            });
+
+            // Remove a máscara antes de enviar ao servidor
+            const form = cpfInput.closest('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const originalValue = cpfInput.value;
+                    cpfInput.value = originalValue.replace(/\D/g, "");
+
+                    setTimeout(() => {
+                        cpfInput.value = originalValue;
+                    }, 50);
+                });
+            }
+        }
+
+        // =========================================================
+        // 3. Lógica para Máscara de Telefone (Fixo/Celular)
+        // =========================================================
+
+        function maskTelefone(value) {
+            value = value.replace(/\D/g, "");
+            value = value.substring(0, 11);
+
+            if (value.length > 0) {
+                value = value.replace(/^(\d{2})/, "($1) ");
+            }
+            if (value.length > 10) {
+                value = value.replace(/(\d{5})(\d)/, "$1-$2");
+            } else if (value.length > 9) {
+                value = value.replace(/(\d{4})(\d)/, "$1-$2");
+            }
+
+            return value;
+        }
+
+        const telefoneInput = document.getElementById('telefone');
+
+        if (telefoneInput) {
+            // Aplica a máscara ao digitar
+            telefoneInput.addEventListener('input', function(e) {
+                e.target.value = maskTelefone(e.target.value);
+            });
+
+            // Garante que, na submissão do formulário, a máscara seja removida
+            const form = telefoneInput.closest('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const originalValue = telefoneInput.value;
+
+                    // Remove parênteses, espaços e hifens antes de enviar
+                    telefoneInput.value = originalValue.replace(/\D/g, "");
+
+                    setTimeout(() => {
+                        telefoneInput.value = originalValue;
+                    }, 50);
+                });
+            }
+        }
+    });
+</script>
+{# ------------------------------------------------------------------------------------------------ #}
+
+</body>
+</html>

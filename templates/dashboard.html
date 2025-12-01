@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="content-header">
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+</div>
+
+<div class="row-cards">
+    <div class="card card-info">
+        <h3>Agendamentos Futuros</h3>
+        <p class="big-number">{{ agendadas_futuras }}</p>
+        <p>Consultas agendadas (a partir de hoje)</p>
+    </div>
+    <div class="card card-success">
+        <h3>Consultas de Hoje</h3>
+        <p class="big-number">{{ consultas_hoje|length }}</p>
+        {# A função now() está disponível globalmente através do context_processor #}
+        <p>Para o dia {{ now().strftime('%d/%m/%Y') }}</p>
+    </div>
+    <div class="card card-warning">
+        <h3>Pacientes Cadastrados</h3>
+        {# A variável 'total_pacientes' vem da view (app.py) #}
+        <p class="big-number">{{ total_pacientes|default('--') }}</p>
+        <p>Total de pacientes no sistema</p>
+    </div>
+    <div class="card card-danger">
+        <h3>Ações Pendentes</h3>
+        <p class="big-number">--</p>
+        <p>Próxima funcionalidade</p>
+    </div>
+</div>
+
+<div class="row-tables">
+    <div class="card">
+        {# A função now() está disponível globalmente através do context_processor #}
+        <h2 style="font-size: 1.5em; margin-top: 0;">Consultas de Hoje ({{ now().strftime('%d/%m/%Y') }})</h2>
+        {% if consultas_hoje %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        {# REMOVIDO: <th>ID</th> #}
+                        <th>Paciente</th>
+                        <th>Hora</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consulta in consultas_hoje %}
+                    <tr>
+                        {# REMOVIDO: <td>{{ consulta.id }}</td> #}
+                        <td>{{ consulta.paciente_nome }}</td>
+                        {# CORRIGIDO: Usando a função format_timedelta para hora #}
+                        <td>{{ format_timedelta(consulta.hora) }}</td>
+                        <td>{{ consulta.tipo_consulta }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">Nenhuma consulta agendada para hoje.</div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

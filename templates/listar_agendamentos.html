@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-header">
+    <h1><i class="fas fa-edit"></i> Gerenciar Agendamentos Futuros</h1>
+    <p>Lista todas as consultas AGENDADAS a partir de hoje.</p>
+</div>
+
+<div class="card">
+    {% if agendamentos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Paciente</th>
+                    <th>CPF</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for agendamento in agendamentos %}
+                <tr>
+                    <td>{{ agendamento.data.strftime('%d/%m/%Y') }}</td>
+                    {# CORREÇÃO AQUI: Usando o filtro format_timedelta para tratar o objeto de duração #}
+                    <td>{{ format_timedelta(agendamento.hora) }}</td>
+                    <td>{{ agendamento.paciente_nome }}</td>
+                    <td>{{ agendamento.cpf }}</td>
+                    <td>{{ agendamento.tipo_consulta }}</td>
+                    <td><span style="font-weight: bold; color: var(--cor-primaria);">{{ agendamento.status }}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <form method="POST" action="{{ url_for('gerenciar_agendamento', consulta_id=agendamento.id, action='realizar') }}" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm" title="Marcar como Realizada e Registrar Atendimento">
+                                    <i class="fas fa-check-circle"></i> Realizar
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('gerenciar_agendamento', consulta_id=agendamento.id, action='cancelar') }}" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja CANCELAR este agendamento?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Cancelar Agendamento">
+                                    <i class="fas fa-times-circle"></i> Cancelar
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; padding: 20px; background-color: #e9f7ef; border: 1px solid #d4edda; border-radius: 4px; color: #155724;">
+            <i class="fas fa-check-circle"></i> Não há agendamentos futuros pendentes no momento.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

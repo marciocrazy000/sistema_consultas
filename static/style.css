@@ -1,0 +1,502 @@
+/* -----------------------------------------------------------
+   style.css
+   Estilos base para o Sistema (Inclui Login, Sidebar e Layout Geral)
+   * ATUALIZADO com base na nova estética CSS (Moderno, Limpo, Azul) *
+-------------------------------------------------------------- */
+
+/* --- Variáveis de Cores (Adaptadas ao Novo Padrão) --- */
+:root {
+    /* Cores Principais do Novo Estilo */
+    --color-primary-blue: #1877F2; /* Novo azul de ação principal */
+    --color-text-light: #606770; /* Texto secundário/label (Novo padrão) */
+    --color-border-subtle: #D0D0D0; /* Borda sutil (Novo padrão) */
+
+    /* Mapeamento das Suas Variáveis para o Novo Estilo */
+    --cor-primaria: var(--color-primary-blue); /* Azul principal (Ação/Destaque) */
+    --cor-secundaria: #28a745; /* Verde para sucesso (Mantido o padrão de sucesso) */
+    --cor-fundo-claro: #F0F2F5; /* Fundo geral claro (Novo Cinza Suave) */
+    --cor-fundo-box: #ffffff; /* Fundo de cartões/caixas (BRANCO PURO) */
+    --cor-texto: #333; /* Cor principal do texto */
+    --cor-borda: var(--color-border-subtle); /* Cor de bordas e linhas */
+
+    /* Estilos de Menu/Sidebar */
+    --cor-menu: var(--cor-fundo-box); /* Fundo da SIDEBAR agora é BRANCO */
+    --cor-menu-item: var(--cor-texto); /* Cor do TEXTO da SIDEBAR agora é ESCURO */
+    --cor-menu-ativo: var(--cor-primaria); /* Cor do TEXTO ATIVO da SIDEBAR é o azul principal */
+    --cor-sidebar-ativo-fundo: #E8F0FE; /* Fundo azul CLARO para item ativo (Mais visível) */
+    --cor-menu-hover-fundo: #f0f0f0; /* Fundo cinza claro no hover */
+}
+
+/* --- Base --- */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Nova Tipografia */
+    background-color: var(--cor-fundo-claro);
+    margin: 0;
+    color: var(--cor-texto);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+.container-app {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* -----------------------------------------------------------
+   1. ESTILO ESPECÍFICO PARA O LOGIN (TELA INICIAL)
+   ----------------------------------------------------------- */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--cor-fundo-claro);
+    width: 100%;
+}
+.login-box {
+    background-color: var(--cor-fundo-box);
+    padding: 30px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* LOGIN MAIS COMPACTO */
+}
+
+/* NOVO: Estilo para a imagem de logo (MÁRCIO'S) dentro da caixa de login */
+.login-box img {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 5px;
+    position: static;
+}
+
+/* Inputs de Login */
+.login-box input[type="email"], .login-box input[type="password"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 6px;
+    font-size: 1.05em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    margin-bottom: 0;
+}
+
+.login-box input[type="email"] {
+    margin-bottom: 10px; /* Pequena margem para separar do input abaixo */
+}
+.login-box input[type="password"] {
+    margin-bottom: 0;
+}
+
+.login-box input:focus {
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 1px var(--cor-primaria);
+}
+
+/* 🚀 REGRAS DE LOGIN ATUALIZADAS PARA CENTRALIZAÇÃO PERFEITA */
+.login-box .btn-primary {
+    width: 100%; /* Garante que o botão tenha a largura total da caixa, como os inputs */
+    margin-top: 5px;
+    font-weight: bold;
+    padding: 14px 20px;
+    font-size: 1.15em;
+    border-radius: 6px;
+    /* Garantimos que o botão seja um bloco ou flex para que o text-align funcione,
+       mas a centralização será feita na regra .btn abaixo. */
+}
+/* REMOVEMOS A REGRA .login-box .btn DUPLICADA AQUI E CONFIAMOS NA REGRA GLOBAL,
+   MAS AJUSTAMOS A REGRA GLOBAL PARA FUNCIONAR CORRETAMENTE. */
+/* FIM DAS REGRAS ADICIONADAS */
+
+
+/* -----------------------------------------------------------
+   2. LAYOUT GERAL (HEADER E SIDEBAR) - PÁGINAS LOGADAS
+   ----------------------------------------------------------- */
+
+/* --- Header (Barra Superior) --- */
+header {
+    background-color: var(--cor-fundo-box);
+    border-bottom: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    height: 60px;
+    display: flex;
+    justify-content: space-between; /* AJUSTE: Para posicionar o título à esquerda e o info à direita */
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+/* NOVO: Título esquerdo em Negrito */
+.header-left-title {
+    font-size: 1.2em;
+    font-weight: 700; /* Negrito */
+    color: var(--cor-texto);
+    margin-right: auto;
+}
+
+/* Logo Centralizada no Header (Ajustada para a nova lógica) */
+.header-center-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin-left: 0;
+}
+
+.header-logo-image {
+    max-width: 100px;
+    height: 40px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 500;
+    /* Remover margin-left: auto; pois justify-content: space-between já faz o espaçamento */
+}
+.user-info span {
+    margin-right: 0;
+    font-size: 0.95em;
+    color: var(--color-text-light);
+    font-weight: 500;
+}
+.btn-sair {
+    background-color: #e74c3c;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    /* 💥 MUDANÇA APLICADA: Remove a sublinhagem do link "Sair" */
+    text-decoration: none;
+}
+.btn-sair:hover {
+    background-color: #c0392b;
+    /* 💥 MUDANÇA APLICADA: Remove a sublinhagem no hover também */
+    text-decoration: none;
+}
+
+/* --- Sidebar (Menu Lateral) --- */
+.sidebar {
+    width: 250px;
+    background-color: var(--cor-menu);
+    color: var(--cor-menu-item);
+    padding-top: 60px;
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 900;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+.sidebar a {
+    padding: 12px 20px;
+    font-weight: 600;
+    color: var(--cor-menu-item);
+    display: flex;
+    align-items: center;
+    border-left: 5px solid transparent;
+    transition: all 0.2s;
+    /* CORREÇÃO APLICADA: Remove o sublinhado em estado normal (Já estava na sua versão) */
+    text-decoration: none !important;
+}
+.sidebar a:hover {
+    background-color: var(--cor-menu-hover-fundo);
+    color: var(--cor-menu-ativo);
+    /* CORREÇÃO APLICADA: Remove o sublinhado ao passar o mouse (Já estava na sua versão) */
+    text-decoration: none !important;
+}
+.sidebar a.active {
+    background-color: var(--cor-sidebar-ativo-fundo);
+    color: var(--cor-menu-ativo);
+    border-left: 5px solid var(--cor-primaria);
+    text-decoration: none; /* Mantém a remoção para o estado ativo também */
+}
+.sidebar i {
+    margin-right: 10px;
+    font-size: 1.1em;
+    color: var(--color-text-light);
+    width: auto;
+}
+.sidebar a.active i {
+    color: var(--cor-menu-ativo);
+}
+
+/* --- Content (Área Principal) --- */
+.content-wrapper {
+    margin-left: 250px;
+    padding: 80px 20px 20px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--cor-fundo-claro);
+}
+.content-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.content-header h1 {
+    font-size: 1.8em;
+    font-weight: 300;
+    color: var(--cor-texto);
+    margin: 0;
+}
+
+/* --- Cards/Caixas --- */
+.card {
+    background-color: var(--cor-fundo-box);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-top: 5px solid var(--cor-primaria);
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.row-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.row-cards > .card {
+    text-align: left;
+    padding: 20px;
+    margin-bottom: 0;
+    border-top-width: 5px;
+}
+
+.card-info { border-top-color: var(--cor-primaria); }
+.card-success { border-top-color: var(--cor-secundaria); }
+.card-warning { border-top-color: var(--color-status-liberadas, #f39c12); }
+.card-danger { border-top-color: #dc3545; }
+
+.big-number {
+    font-size: 2.5em;
+    font-weight: 800;
+    line-height: 1;
+    margin: 5px 0;
+    color: var(--cor-texto);
+}
+.row-tables {
+    display: flex;
+    gap: 20px;
+}
+.row-tables > .card {
+    flex: 1;
+}
+
+
+/* -----------------------------------------------------------
+   3. ELEMENTOS INTERATIVOS (FORMULÁRIOS, BOTÕES, TABELAS)
+   ----------------------------------------------------------- */
+
+/* --- Formulários e Inputs --- */
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 0.9em;
+    color: var(--color-text-light);
+}
+input[type="text"], input[type="email"], input[type="password"],
+input[type="date"], input[type="time"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 1em;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--cor-primaria);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--cor-primaria);
+}
+
+/* --- Botões (Ajustado ao Estilo 'Btn-Primary') --- */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-decoration: none;
+
+    /* 💥 CORREÇÃO PRINCIPAL: Substitua 'inline-flex' por 'block' ou remova 'display: inline-flex'
+       e use 'display: block' APENAS NO BOTÃO DE LOGIN, se necessário.
+       Para botões que precisam do ícone (como você usa abaixo), manter 'inline-flex' é bom,
+       mas precisamos garantir que o texto seja centralizado. */
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center; /* 💥 NOVO: Use 'justify-content: center' para centralizar itens (texto e ícone) em um container flex/inline-flex */
+    gap: 5px;
+
+    /* REMOVIDO: 'text-align: center;' na regra .btn, pois 'justify-content: center'
+       no flexbox lida com a centralização dos itens de forma mais robusta e controlada. */
+
+    font-size: 0.95em;
+    font-weight: 600;
+}
+.btn-primary {
+    background-color: var(--cor-primaria);
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #166FE5;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+.btn-danger:hover {
+    background-color: #c82333;
+}
+.btn-success {
+    background-color: var(--cor-secundaria);
+    color: white;
+}
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* --- Alertas/Flash Messages (Pop-up flutuante CENTRALIZADO) --- */
+.alert-float {
+    /* Posição Fixa na tela */
+    position: fixed;
+    bottom: 20px; /* Distância da parte inferior */
+
+    /* NOVO: Centralização Horizontal */
+    left: 50%;
+    transform: translateX(-50%) translateY(100%); /* Inicialmente, deslocado para o centro e fora da tela (para baixo) */
+
+    z-index: 2000; /* Garante que fique acima de todos os outros elementos */
+    max-width: 350px; /* Limita a largura para ser um pop-up discreto */
+    width: 90%; /* Ocupa 90% da largura em telas menores, até 350px */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra para destacá-lo */
+    opacity: 0; /* Começa invisível */
+
+    /* CHAVE: Garante que a transição de opacidade e movimento funcionem juntas */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    border-radius: 8px; /* Cantos mais suaves */
+}
+
+/* Estado Ativo: Visível e na posição final */
+.alert-float.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0); /* Volta para a posição central, com deslocamento Y zero */
+}
+
+/* Estilo visual base (Mantido) */
+.alert {
+    padding: 12px 15px;
+    margin-bottom: 0; /* Remove a margem padrão */
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-weight: 600;
+}
+/* ... (Seus estilos alert-success, alert-danger, etc. continuam os mesmos) ... */
+.alert-success {
+    color: #155724;
+    background-color: #D4EDDA;
+    border-color: #C3E6CB;
+}
+.alert-danger {
+    color: #721C24;
+    background-color: #F8D7DA;
+    border-color: #F5C6CB;
+}
+.alert-info {
+    color: #0c5460;
+    background-color: #D1ECF1;
+    border-color: #BEE5EB;
+}
+
+/* --- Tabelas (Estilo do Novo CSS) --- */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.table th, .table td {
+    border: none;
+    border-bottom: 1px solid #F0F0F0;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 0.95em;
+}
+.table th {
+    background-color: var(--cor-primaria);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85em;
+}
+.table tbody tr:nth-child(even) {
+    background-color: transparent;
+}
+.table tbody tr:hover {
+    background-color: #f7f7f7;
+}
+.table-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* --- Responsividade Básica (Mantido) --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-top: 0;
+        box-shadow: none;
+    }
+    .content-wrapper {
+        margin-left: 0;
+        padding-top: 70px;
+    }
+    .row-cards {
+        grid-template-columns: 1fr;
+    }
+    /* NOVO: Esconde o título esquerdo em telas pequenas para não competir com a logo central */
+    .header-left-title {
+        display: none;
+    }
+    /* AJUSTE: Oculte o logo centralizado em telas pequenas */
+    .header-center-logo {
+        display: none;
+    }
+    /* AJUSTE: Coloque o user-info à esquerda/centralizado na falta do logo/título */
+    .user-info {
+        margin: 0 auto 0 0; /* Move o user-info para a esquerda */
+    }
+}

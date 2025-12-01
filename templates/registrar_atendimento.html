@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content-header">
+    <h1><i class="fas fa-file-medical-alt"></i> Registrar Atendimento (Evolução)</h1>
+    <p>Registre o histórico da consulta para aquelas marcadas como REALIZADAS e pendentes.</p>
+</div>
+
+{% if consultas_pendentes %}
+<div class="card" style="max-width: 900px; margin: 0 auto;">
+    <h2>Consulta Pendente de Registro</h2>
+    <form method="POST" action="{{ url_for('registrar_atendimento') }}">
+        <div class="form-group">
+            <label for="consulta_id">Selecione a Consulta</label>
+            <select id="consulta_id" name="consulta_id" required>
+                <option value="">Selecione a consulta a ser registrada</option>
+                {% for consulta in consultas_pendentes %}
+                <option value="{{ consulta.id }}">
+                    {# CORREÇÃO AQUI: Chamando format_timedelta como FUNÇÃO GLOBAL #}
+                    {{ consulta.paciente_nome }} - {{ consulta.data.strftime('%d/%m/%Y') }} às {{ format_timedelta(consulta.hora) }} - ({{ consulta.tipo_consulta }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="descricao">Descrição e Evolução do Paciente</label>
+            <textarea id="descricao" name="descricao" rows="8" placeholder="Descreva o atendimento, o diagnóstico, os procedimentos realizados e a evolução do paciente. Seja detalhado e claro." required></textarea>
+        </div>
+
+        <div style="text-align: right; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-clipboard-check"></i> Salvar Registro de Atendimento
+            </button>
+        </div>
+    </form>
+</div>
+{% else %}
+<div class="card">
+    <p style="text-align: center; padding: 20px; background-color: #e9f7ef; border: 1px solid #d4edda; border-radius: 4px; color: #155724;">
+        <i class="fas fa-check-circle"></i> Não há consultas REALIZADAS pendentes de registro de atendimento.
+    </p>
+</div>
+{% endif %}
+{% endblock %}
