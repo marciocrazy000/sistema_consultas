@@ -1,3 +1,4 @@
 Flask
 Flask-MySQLdb
-bcrypt
+pip install Flask Flask-MySQLdb
+#versão python: Python 3.13.0
